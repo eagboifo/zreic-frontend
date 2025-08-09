@@ -18,29 +18,28 @@ function Login() {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('http://localhost:5000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-        login(data.user, rememberMe);
-        navigate(from, { replace: true }); // ✅ Redirect to saved route
-      } else {
-        setMessage(data.error || 'Login failed');
-      }
-    } catch (err) {
-      setMessage('Server error');
-      console.error(err);
+    if (response.ok) {
+      login(data.user, rememberMe);
+      navigate(from, { replace: true }); // ✅ Redirect to saved route
+    } else {
+      setMessage(data.error || 'Login failed');
     }
-  };
-
+  } catch (err) {
+    setMessage('Server error');
+    console.error(err);
+  }
+};
   return (
     <div className="max-w-md mx-auto mt-10">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
