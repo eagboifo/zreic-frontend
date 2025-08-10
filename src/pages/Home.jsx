@@ -10,116 +10,138 @@ export default function Home() {
     <div className="space-y-16">
       {/* Hero */}
       <section className="rounded-2xl bg-gradient-to-br from-blue-50 to-white border p-8 md:p-12">
-        <div className="max-w-3xl">
-          <p className="text-sm uppercase tracking-widest text-blue-700 font-semibold">
-            ZREIC Portal
-          </p>
-          <h1 className="mt-2 text-4xl md:text-5xl font-extrabold leading-tight text-gray-900">
-            Manage your account, track updates, and access resources—fast.
-          </h1>
-          <p className="mt-4 text-gray-600 text-lg">
-            This is your central hub. Review your details, update your profile, and
-            stay on top of what matters—all in one place.
-          </p>
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <p className="text-sm uppercase tracking-widest text-blue-700 font-semibold">
+              ZREIC • Private Real Estate
+            </p>
+            <h1 className="mt-2 text-4xl md:text-5xl font-extrabold leading-tight text-gray-900">
+              Build wealth in real assets with clarity and control.
+            </h1>
+            <p className="mt-4 text-gray-600 text-lg">
+              ZREIC connects qualified investors to institutional-grade deals and
+              gives you a single place to track performance, distributions, and
+              documents—end to end.
+            </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            {!token ? (
-              <>
-                <Link
-                  to="/register"
-                  className="px-5 py-3 rounded-xl bg-gray-900 text-white hover:opacity-90 transition"
-                >
-                  Create an account
-                </Link>
-                <Link
-                  to="/login"
-                  className="px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
-                >
-                  Log in
-                </Link>
-                <Link
-                  to="/about"
-                  className="px-5 py-3 rounded-xl bg-white border hover:bg-gray-50 transition"
-                >
-                  Learn more
-                </Link>
-              </>
-            ) : (
-              <>
-                <span className="px-5 py-3 rounded-xl bg-green-50 text-green-800 border border-green-200">
-                  Signed in as <b>{user?.fullName || user?.email}</b>
-                </span>
-                <Link
-                  to="/dashboard"
-                  className="px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
-                >
-                  Go to dashboard
-                </Link>
-                <Link
-                  to="/profile"
-                  className="px-5 py-3 rounded-xl bg-white border hover:bg-gray-50 transition"
-                >
-                  Edit profile
-                </Link>
-              </>
-            )}
+            <ul className="mt-6 space-y-2 text-gray-700">
+              <li className="flex items-start gap-2">
+                <Check /> Access curated offerings with full diligence packs.
+              </li>
+              <li className="flex items-start gap-2">
+                <Check /> Monitor NOI, equity multiple, and IRR—updated as projects advance.
+              </li>
+              <li className="flex items-start gap-2">
+                <Check /> Distributions, statements, and K-1s in one secure vault.
+              </li>
+            </ul>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              {!token ? (
+                <>
+                  <Link
+                    to="/register"
+                    className="px-5 py-3 rounded-xl bg-gray-900 text-white hover:opacity-90 transition"
+                  >
+                    Create investor account
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
+                  >
+                    Investor login
+                  </Link>
+                  <Link
+                    to="/about"
+                    className="px-5 py-3 rounded-xl bg-white border hover:bg-gray-50 transition"
+                  >
+                    How it works
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <span className="px-5 py-3 rounded-xl bg-green-50 text-green-800 border border-green-200">
+                    Signed in as <b>{user?.fullName || user?.email}</b>
+                  </span>
+                  <Link
+                    to="/dashboard"
+                    className="px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
+                  >
+                    Go to dashboard
+                  </Link>
+                  <Link
+                    to="/profile"
+                    className="px-5 py-3 rounded-xl bg-white border hover:bg-gray-50 transition"
+                  >
+                    Edit profile
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Inline illustration (no external image needed) */}
+          <div className="relative">
+            <div className="absolute -inset-6 bg-blue-100/50 blur-2xl rounded-3xl" aria-hidden />
+            <div className="relative rounded-2xl border bg-white p-6">
+              <Skyline />
+              <div className="mt-5 grid grid-cols-3 gap-3 text-center">
+                <MiniStat value="$25M+" label="AUM*" />
+                <MiniStat value="6" label="Markets" />
+                <MiniStat value="120+" label="Investors*" />
+              </div>
+              <p className="mt-2 text-xs text-gray-500">
+                *Illustrative placeholders. Replace with live metrics.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Feature grid */}
       <section>
-        <h2 className="text-2xl font-bold mb-6">What you can do here</h2>
+        <h2 className="text-2xl font-bold mb-6">Why investors choose ZREIC</h2>
         <div className="grid md:grid-cols-3 gap-6">
           <FeatureCard
-            icon={
-              <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-4 0-8 2-8 6v2h16v-2c0-4-4-6-8-6z"></path>
-              </svg>
-            }
-            title="Profile & Security"
-            desc="Update your name, email and password. Your data stays private and secure."
-            cta={{ to: "/profile", label: "Manage profile" }}
+            icon={<IconDiligence />}
+            title="Curated offerings"
+            desc="Deal rooms with models, comps, and risk notes. Commit in a few clicks."
+            cta={{ to: "/dashboard", label: "View pipeline" }}
           />
           <FeatureCard
-            icon={
-              <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                <path d="M3 5h18v2H3V5zm0 6h12v2H3v-2zm0 6h18v2H3v-2z"></path>
-              </svg>
-            }
-            title="Clean Dashboard"
-            desc="A simple overview with quick links to what you need most."
+            icon={<IconAnalytics />}
+            title="Portfolio analytics"
+            desc="Track NOI, LTV, IRR, and equity multiple. Bird’s-eye and asset-level views."
             cta={{ to: "/dashboard", label: "Open dashboard" }}
           />
           <FeatureCard
-            icon={
-              <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                <path d="M19 3H5C3.9 3 3 3.9 3 5v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-              </svg>
-            }
-            title="Support & Docs"
-            desc="Lightweight pages to explain the basics and help you self-serve."
-            cta={{ to: "/about", label: "Read about ZREIC" }}
+            icon={<IconDocuments />}
+            title="Documents & K-1s"
+            desc="Statements, updates, and tax docs in a secure vault with audit logs."
+            cta={{ to: "/about", label: "Learn more" }}
           />
         </div>
       </section>
 
-      {/* Stats / trust strip (placeholder numbers you can swap) */}
+      {/* Stats strip */}
       <section className="rounded-2xl border bg-white p-6 md:p-8">
         <div className="grid sm:grid-cols-3 gap-6 text-center">
-          <Stat value="99.9%" label="Uptime" />
-          <Stat value="< 200ms" label="API response" />
-          <Stat value="24/7" label="Access" />
+          <Stat value="~8–14%" label="Target net IRR*" />
+          <Stat value="Quarterly" label="Distribution cadence" />
+          <Stat value="Institutional" label="Asset management" />
         </div>
+        <p className="mt-2 text-xs text-gray-500">
+          *For illustration only. Not an offer or guarantee. Past performance is not indicative of future results.
+        </p>
       </section>
 
       {/* Final CTA */}
       <section className="rounded-2xl bg-gray-900 text-white p-8 md:p-12">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <h3 className="text-2xl font-bold">Ready to get started?</h3>
+            <h3 className="text-2xl font-bold">Join the ZREIC investor community</h3>
             <p className="text-white/80 mt-1">
-              Create your account or sign in to access your dashboard.
+              Create your account to access opportunities and track your portfolio.
             </p>
           </div>
           {!token ? (
@@ -128,7 +150,7 @@ export default function Home() {
                 to="/register"
                 className="px-5 py-3 rounded-xl bg-white text-gray-900 hover:bg-gray-100 transition"
               >
-                Create an account
+                Create account
               </Link>
               <Link
                 to="/login"
@@ -151,6 +173,36 @@ export default function Home() {
   );
 }
 
+/* ------------------------ small components ------------------------ */
+
+function Check() {
+  return (
+    <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-green-100 text-green-700">
+      <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden>
+        <path d="M7.629 13.233 4.4 10.004l1.2-1.2 2.029 2.03 6.8-6.8 1.2 1.2-8 8z" />
+      </svg>
+    </span>
+  );
+}
+
+function MiniStat({ value, label }) {
+  return (
+    <div className="rounded-lg border bg-white p-3">
+      <div className="text-lg font-bold">{value}</div>
+      <div className="text-xs text-gray-600">{label}</div>
+    </div>
+  );
+}
+
+function Stat({ value, label }) {
+  return (
+    <div>
+      <div className="text-3xl font-extrabold">{value}</div>
+      <div className="text-gray-600 mt-1">{label}</div>
+    </div>
+  );
+}
+
 function FeatureCard({ icon, title, desc, cta }) {
   return (
     <div className="rounded-2xl border bg-white p-6 hover:shadow-sm transition">
@@ -168,11 +220,77 @@ function FeatureCard({ icon, title, desc, cta }) {
   );
 }
 
-function Stat({ value, label }) {
+/* ------------------------ Inline illustration ------------------------ */
+
+function Skyline() {
   return (
-    <div>
-      <div className="text-3xl font-extrabold">{value}</div>
-      <div className="text-gray-600 mt-1">{label}</div>
-    </div>
+    <svg
+      role="img"
+      aria-label="Stylized city skyline"
+      viewBox="0 0 560 280"
+      className="w-full h-auto"
+    >
+      <defs>
+        <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.05" />
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="560" height="280" fill="url(#g1)" rx="16" />
+      {/* ground */}
+      <rect x="0" y="220" width="560" height="60" fill="#EFF6FF" />
+      {/* buildings */}
+      <g fill="#1D4ED8">
+        <rect x="40" y="120" width="70" height="100" rx="4" opacity="0.25" />
+        <rect x="130" y="90" width="80" height="130" rx="4" opacity="0.20" />
+        <rect x="230" y="60" width="70" height="160" rx="4" opacity="0.18" />
+        <rect x="320" y="100" width="90" height="120" rx="4" opacity="0.22" />
+        <rect x="430" y="70" width="70" height="150" rx="4" opacity="0.20" />
+      </g>
+      {/* windows */}
+      <g fill="#93C5FD">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <rect key={"w1-"+i} x={50} y={130 + i * 9} width="50" height="4" rx="2" />
+        ))}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <rect key={"w2-"+i} x={140} y={100 + i * 8} width="60" height="4" rx="2" />
+        ))}
+        {Array.from({ length: 14 }).map((_, i) => (
+          <rect key={"w3-"+i} x={240} y={70 + i * 7} width="50" height="3.5" rx="2" />
+        ))}
+        {Array.from({ length: 10 }).map((_, i) => (
+          <rect key={"w4-"+i} x={330} y={110 + i * 8} width="70" height="4" rx="2" />
+        ))}
+        {Array.from({ length: 13 }).map((_, i) => (
+          <rect key={"w5-"+i} x={440} y={80 + i * 7} width="50" height="3.5" rx="2" />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+/* ------------------------------ Icons ---------------------------------- */
+
+function IconDiligence() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor" aria-hidden>
+      <path d="M3 5h18v2H3zM3 11h12v2H3zM3 17h18v2H3z" />
+    </svg>
+  );
+}
+
+function IconAnalytics() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor" aria-hidden>
+      <path d="M3 3h2v18H3zM7 13h2v8H7zM11 9h2v12h-2zM15 5h2v16h-2zM19 3h2v18h-2z" />
+    </svg>
+  );
+}
+
+function IconDocuments() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor" aria-hidden>
+      <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5" />
+    </svg>
   );
 }
