@@ -17,7 +17,8 @@ export default function App() {
     <Layout>
       <Routes>
         {/* Public */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -27,8 +28,8 @@ export default function App() {
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
 
-        {/* Fallback  home (NOT /login) */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Fallback  /home */}
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </Layout>
   );

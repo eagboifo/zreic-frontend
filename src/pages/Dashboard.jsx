@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,13 +8,11 @@ function Dashboard() {
 
   // Redirect to login if user is not authenticated
   if (!user) {
-    navigate('/login');
     return null;
   }
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
   };
 
   return (
@@ -32,3 +30,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+

@@ -12,9 +12,9 @@ export default function Navbar() {
     <header className="border-b bg-white">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link to="/" className="font-semibold tracking-wide">ZREIC</Link>
+          <Link to="/home" className="font-semibold tracking-wide">ZREIC</Link>
           <nav className="hidden sm:flex items-center gap-4 text-sm">
-            <Link to="/">Home</Link>
+            <Link to="/home">Home</Link>
             <Link to="/about">About</Link>
             {token && (
               <>
@@ -42,3 +42,4 @@ export default function Navbar() {
     </header>
   );
 }
+
