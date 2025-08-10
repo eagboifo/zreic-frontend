@@ -1,66 +1,95 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { loginUser, getMe } from '../services/auth';
 
-export const AuthContext = createContext();
+const AuthCtx = createContext(null);
 
-const SESSION_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
+function readStoredToken() {
+  return localStorage.getItem('token') || sessionStorage.getItem('token') || '';
+}
+function writeStoredToken(token, remember) {
+  localStorage.removeItem('token'); sessionStorage.removeItem('token');
+  (remember ? localStorage : sessionStorage).setItem('token', token);
+}
+function clearStoredToken() {
+  localStorage.removeItem('token'); sessionStorage.removeItem('token');
+}
+function parseJwt(token) {
+  try {
+    const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const json = decodeURIComponent(atob(base64).split('').map(c => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`).join(''));
+    return JSON.parse(json);
+  } catch { return {}; }
+}
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
+  const [token, setToken] = useState(() => readStoredToken());
   const [user, setUser] = useState(null);
-  const timeoutRef = useRef(null);
+  const [loading, setLoading] = useState(!!token);
+  const logoutTimerRef = useRef(null);
 
-  const scheduleAutoLogout = (expiresAt) => {
-    const delay = expiresAt - new Date().getTime();
-    if (delay > 0) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => {
-        logout();
-        alert("Session expired. Please log in again.");
-      }, delay);
-    }
-  };
-
-  useEffect(() => {
-  const storedSession = localStorage.getItem('session') || sessionStorage.getItem('session');
-  if (storedSession) {
-    const { user, expiresAt } = JSON.parse(storedSession);
-    if (new Date().getTime() < expiresAt) {
-      setUser(user);
-      scheduleAutoLogout(expiresAt);
-    } else {
-      localStorage.removeItem('session');
-      sessionStorage.removeItem('session');
+  function logout() {
+    clearStoredToken();
+    setToken('');
+    setUser(null);
+    if (logoutTimerRef.current) {
+      clearTimeout(logoutTimerRef.current);
+      logoutTimerRef.current = null;
     }
   }
-  return () => clearTimeout(timeoutRef.current);
-}, []);
 
+  function scheduleAutoLogout(jwt) {
+    if (logoutTimerRef.current) {
+      clearTimeout(logoutTimerRef.current);
+      logoutTimerRef.current = null;
+    }
+    const expMs = jwt?.exp ? jwt.exp * 1000 : null;
+    if (!expMs) return; // no exp in token → no timer (optional: add fallback below)
+    const msLeft = expMs - Date.now();
+    if (msLeft <= 0) logout();
+    else logoutTimerRef.current = setTimeout(() => logout(), msLeft);
+  }
 
-// Replace your login function in AuthContext.jsx
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchMe() {
+      if (!token) { setLoading(false); return; }
+      try {
+        const me = await getMe(token);
+        if (!cancelled) setUser(me);
+      } catch {
+        if (!cancelled) {
+          clearStoredToken();
+          setToken('');
+          setUser(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    scheduleAutoLogout(parseJwt(token));
+    fetchMe();
+    return () => { cancelled = true; };
+  }, [token]);
 
-const login = (userData, remember) => {
-  const expiresAt = new Date().getTime() + SESSION_TIMEOUT_MS;
-  const session = { user: userData, expiresAt };
-  const storage = remember ? localStorage : sessionStorage;
+  async function login(email, password, opts = { remember: true }) {
+    const res = await loginUser(email, password); // expects { token, user? }
+    writeStoredToken(res.token, !!opts.remember);
+    setToken(res.token);
+    if (res.user) {
+      setUser({
+        id: res.user.id,
+        fullName: res.user.fullName,
+        email: res.user.email,
+        role: res.user.role,
+      });
+    }
+    scheduleAutoLogout(parseJwt(res.token));
+    return res;
+  }
 
-  storage.setItem('session', JSON.stringify(session));
-  setUser(userData);
-  scheduleAutoLogout(expiresAt);
-};
+  const value = { token, user, loading, login, logout, setUser };
+  return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
+}
 
-  const logout = () => {
-    setUser(null);
-    clearTimeout(timeoutRef.current);
-    localStorage.removeItem('session');
-  };
-
-  const isAuthenticated = !!user;
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => useContext(AuthCtx);

@@ -4,11 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Login() {
-  const { login } = useAuth();
+  const { login } = useAuth(); // uses context login
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/dashboard'; // default redirect
+  const from = location.state?.from?.pathname || '/dashboard'; // keep your default
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
@@ -18,28 +18,21 @@ function Login() {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage(''); // optional clear
 
-    const data = await response.json();
-
-    if (response.ok) {
-      login(data.user, rememberMe);
-      navigate(from, { replace: true }); // ✅ Redirect to saved route
-    } else {
-      setMessage(data.error || 'Login failed');
+    try {
+      // CHANGED: delegate to AuthContext (handles token storage + /me)
+      await login(formData.email, formData.password, { remember: rememberMe });
+      navigate(from, { replace: true }); // redirect to saved route
+    } catch (err) {
+      // CHANGED: show error from AuthContext/api helper
+      setMessage(err?.message || 'Login failed');
+      console.error(err);
     }
-  } catch (err) {
-    setMessage('Server error');
-    console.error(err);
-  }
-};
+  };
+
   return (
     <div className="max-w-md mx-auto mt-10">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
