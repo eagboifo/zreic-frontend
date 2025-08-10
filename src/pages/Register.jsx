@@ -1,5 +1,32 @@
-// FIXED_FRONTEND: Register.jsx
+// FIXED_FRONTEND: Register.jsx (hardened against 404s and bad bases)
 import React, { useState, useMemo } from 'react';
+
+function normalizeBase(raw) {
+  if (!raw) return '';
+  let base = String(raw).trim();
+  base = base.replace(/\/+$/, ''); // remove trailing slashes
+  base = base.replace(/\/api$/i, '').replace(/\/api\/$/i, ''); // strip trailing /api
+  return base;
+}
+
+function computeApiBase() {
+  const envBase = import.meta.env.VITE_API_BASE_URL;
+  if (envBase && envBase.length) {
+    return normalizeBase(envBase);
+  }
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    console.warn(
+      'VITE_API_BASE_URL not set. Falling back to dev proxy. ' +
+      'Ensure vite.config.js has a proxy for /api -> https://zreic-backend.onrender.com'
+    );
+    return '';
+  }
+  console.warn(
+    'VITE_API_BASE_URL not set in a non-local environment. ' +
+    'Set VITE_API_BASE_URL=https://zreic-backend.onrender.com'
+  );
+  return '';
+}
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -11,19 +38,10 @@ function Register() {
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Read API base from Vite env; warn if missing
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = useMemo(() => computeApiBase(), []);
   const REGISTER_URL = useMemo(() => {
-    // If API_BASE is undefined, this will log a warning and produce a bad URL;
-    // set up your Vite env or a dev proxy as discussed.
-    if (!API_BASE) {
-      console.warn(
-        'VITE_API_BASE_URL is not set. Configure .env (VITE_API_BASE_URL=https://zreic-backend.onrender.com) ' +
-        'or add a Vite dev proxy to /api.'
-      );
-    }
-    const base = (API_BASE || '').replace(/\/$/, '');
-    return `${base}/api/register`;
+    const base = normalizeBase(API_BASE);
+    return `${base}/api/register`; // will be relative if base === ''
   }, [API_BASE]);
 
   const handleChange = (e) => {
@@ -44,16 +62,19 @@ function Register() {
         body: JSON.stringify(formData),
       });
 
-      // Try to parse JSON even on non-2xx responses
       let data = {};
       try {
         data = await res.json();
       } catch {
-        /* non-JSON response */
+        /* response not JSON; leave data as {} */
       }
 
       if (!res.ok) {
-        const errMsg = data?.error || `Registration failed (${res.status})`;
+        const errMsg =
+          data?.error ||
+          (res.status === 404
+            ? `404 Not Found: ${REGISTER_URL} — check your base URL and route path (/api/register)`
+            : `Request failed (${res.status})`);
         setIsError(true);
         setMessage(errMsg);
         return;
@@ -78,8 +99,9 @@ function Register() {
       {message ? (
         <div
           className={`mb-4 rounded p-3 text-sm ${
-            isError ? 'bg-red-50 text-red-700 border border-red-200'
-                    : 'bg-green-50 text-green-700 border border-green-200'
+            isError
+              ? 'bg-red-50 text-red-700 border border-red-200'
+              : 'bg-green-50 text-green-700 border border-green-200'
           }`}
         >
           {message}
@@ -125,10 +147,13 @@ function Register() {
         </button>
       </form>
 
-      {/* Tiny helper for env visibility in dev */}
-      <p className="mt-4 text-xs text-gray-500">
-        API: {API_BASE ? API_BASE : 'VITE_API_BASE_URL not set'}
-      </p>
+      <div className="mt-4 text-xs text-gray-500 space-y-1">
+        <p>API Base: {API_BASE || '(relative / dev proxy)'}</p>
+        <p>Register URL: {REGISTER_URL}</p>
+        <p>
+          Tip: In production, set <code>VITE_API_BASE_URL=https://zreic-backend.onrender.com</code> and redeploy.
+        </p>
+      </div>
     </div>
   );
 }

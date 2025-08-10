@@ -1,3 +1,4 @@
+
 // src/services/auth.js
 import { api } from '../lib/api.js';
 
@@ -15,3 +16,5 @@ export const updateProfile = (token, updates) =>
 
 export const changePassword = (token, currentPassword, newPassword) =>
   api('/api/password', { method: 'PUT', token, body: { currentPassword, newPassword } });
+"@ | Set-Content .\src\services\auth.js
+
