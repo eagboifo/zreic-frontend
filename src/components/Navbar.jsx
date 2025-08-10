@@ -1,15 +1,12 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+﻿// src/components/Navbar.jsx
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Navbar() {
   const { token, user, logout } = useAuth();
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
+  const onLogout = () => { logout(); navigate("/"); };
 
   return (
     <header className="border-b bg-white">
@@ -28,25 +25,15 @@ export default function Navbar() {
             )}
           </nav>
         </div>
-
         <div className="flex items-center gap-3">
           {token ? (
             <>
-              <span className="text-sm text-gray-600 hidden sm:inline">
-                {user?.fullName || user?.email}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="px-3 py-1.5 rounded bg-gray-900 text-white hover:opacity-90 text-sm"
-              >
-                Logout
-              </button>
+              <span className="text-sm text-gray-600 hidden sm:inline">{user?.fullName || user?.email}</span>
+              <button onClick={onLogout} className="px-3 py-1.5 rounded bg-gray-900 text-white text-sm hover:opacity-90">Logout</button>
             </>
           ) : (
             <>
-              <Link to="/login" className="px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700 text-sm">
-                Login
-              </Link>
+              <Link to="/login" className="px-3 py-1.5 rounded bg-blue-600 text-white text-sm hover:bg-blue-700">Login</Link>
               <Link to="/register" className="text-sm">Register</Link>
             </>
           )}

@@ -1,16 +1,16 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import PrivateRoute from './components/PrivateRoute';
-import Layout from './components/Layout';
+﻿// src/App.jsx
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
+import Layout from "./components/Layout";
 
-// Pages you already have
-import Home from './pages/Home';
-import About from './pages/About';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Profile from './pages/Profile';
-import ChangePassword from './pages/ChangePassword';
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import ChangePassword from "./pages/ChangePassword";
 
 export default function App() {
   return (
@@ -23,32 +23,11 @@ export default function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Protected */}
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/change-password"
-          element={
-            <PrivateRoute>
-              <ChangePassword />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
 
-        {/* Fallback */}
+        {/* Fallback  home (NOT /login) */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>
