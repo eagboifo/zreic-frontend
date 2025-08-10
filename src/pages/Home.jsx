@@ -13,8 +13,7 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div>
             <p className="text-sm uppercase tracking-widest text-blue-700 font-semibold">
-              ZREIC • Private Real Estate
-            </p>
+            Zodiak Real Estate Investment Cooperative  • ZREIC </p>
             <h1 className="mt-2 text-4xl md:text-5xl font-extrabold leading-tight text-gray-900">
               Build wealth in real assets with clarity and control.
             </h1>
