@@ -1,33 +1,21 @@
-﻿import React, { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+﻿// src/pages/Dashboard.jsx
+import React from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
-function Dashboard() {
-  const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  // Redirect to login if user is not authenticated
-  if (!user) {
-    return null;
-  }
-
-  const handleLogout = () => {
-    logout();
-  };
+export default function Dashboard() {
+  const { user } = useAuth();
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 border rounded shadow">
-      <h2 className="text-3xl font-bold mb-4">Welcome, {user.fullName || user.email}!</h2>
-      <p className="mb-6">You are logged in.</p>
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-      >
-        Logout
-      </button>
+    <div className="max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <p className="mb-6 text-gray-700">
+        Welcome{user ? `, ${user.fullName || user.email}` : ""}.
+      </p>
+      <div className="flex gap-3">
+        <Link to="/profile" className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Edit Profile</Link>
+        <Link to="/change-password" className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Change Password</Link>
+      </div>
     </div>
   );
 }
-
-export default Dashboard;
-
